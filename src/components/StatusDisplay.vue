@@ -1,14 +1,37 @@
+<script setup>
+import { ref} from 'vue';
+import { useMazeStore } from '@/stores/MazeStore';
+import { storeToRefs } from 'pinia'
+const mazeStore = useMazeStore();
+
+
+
+//TODO::时间复杂度动态计算
+const timeComplexityLatex = ref('O(n)'); 
+
+
+const {visitedCells, totalCells, timeTaken, shortestPath} = storeToRefs(mazeStore)
+
+
+</script>
+
+
+
+
 <template>
   <!-- Visited 独占一行 -->
   <div class="status-item visited-item">
     <span class="status-label">Visited:</span>
     <span class="status-value">{{ visitedCells }} / {{ totalCells }}</span>
   </div>
-
+  <div class="status-item visited-item">
+    <span class="status-label">最短路长度:</span>
+    <span class="status-value">{{shortestPath.length}}</span>
+  </div>
   <!-- 时间复杂度与运行时间分块展示 -->
   <div class="status-row">
     <div class="status-item complexity-item">
-      <span class="status-label">时间复杂度</span>
+      <span class="status-label">求解时间复杂度</span>
       <div class="status-content">
         <!-- 假设使用 KaTeX 渲染 LaTeX，例如 O(n²) -->
         <span v-html="timeComplexityLatex"></span>
@@ -17,22 +40,14 @@
     <div class="status-item time-item">
       <span class="status-label">寻路时间开销</span>
       <div class="status-content">
-        <span>{{ searchTime }} ms</span>
+        <span>{{ timeTaken }} ms</span>
       </div>
     </div>
   </div>
 
 </template>
 
-<script setup>
-import { ref } from 'vue';
 
-// 模拟数据（实际使用时从Pinia或父组件传入）
-const visitedCells = ref(120);      // 已访问单元格数量
-const totalCells = ref(200);        // 总单元格数量
-const timeComplexityLatex = ref('O(n)');  // 时间复杂度（LaTeX格式）
-const searchTime = ref(86);         // 寻路时间（毫秒）
-</script>
 
 <style scoped>
 /* 整体行容器：控制两列分块 */
@@ -51,8 +66,7 @@ const searchTime = ref(86);         // 寻路时间（毫秒）
 
 /* Visited项：独占一行，底部加间距 */
 .visited-item {
-  width: 100%;
-  margin-bottom: 5px; /* 与下方行的间隔 */
+  margin-bottom: 50px; /* 与下方行的间隔 */
 }
 
 /* 时间复杂度与时间开销项：各占一半宽度 */

@@ -1,8 +1,29 @@
 <script setup>
-import { ref } from 'vue'
-const width = ref(10)
-const height = ref(10)
-const isAnimate = ref(false)
+import { onMounted } from 'vue'
+
+import { useMazeStore } from '@/stores/MazeStore';
+import { storeToRefs } from 'pinia'
+const mazeStore = useMazeStore();
+
+
+
+
+onMounted(() => {
+  console.log("MazeStore", mazeStore);
+});
+
+// const height = mazeStore.height
+// const width = mazeStore.width
+// const isAnimate = mazeStore.isAnimate
+// const animationSpeed = mazeStore.animationSpeed
+
+const {height, width, isAnimate, animationSpeed, genAlgo, // 生成算法
+  solveAlgo } = storeToRefs(mazeStore)
+
+
+
+
+
 
 const props = {
   expandTrigger: 'hover',
@@ -10,7 +31,7 @@ const props = {
 
 const solveOptions = [
   {
-    value: 'dfs',
+    value: 'DFS',
     label: 'DFS',
     children: [
       {
@@ -24,7 +45,7 @@ const solveOptions = [
     ],
   },
   {
-    value: 'bfs',
+    value: 'BFS',
     label: 'BFS',
     children: [
       {
@@ -38,27 +59,34 @@ const solveOptions = [
     ],
   },
   {
-    value: 'aStar',
+    value: 'AStar',
     label: 'A*',
   },
   {
-    value: 'dijkstra',
+    value: 'Dijkstra',
     label: 'Dijkstra',
   },
 ]
 
 const generateOptions = [
   {
-    value: 'prim',
+    value: 'Prim',
     label: 'Prim',
   },
   {
-    value: 'kruskal',
+    value: 'Kruskal',
     label: 'Kruskal',
   },
 ]
 
-const animationSpeed = ref(50)
+
+// import { watch } from 'vue';
+
+// watch(height, (newVal) => {
+//   console.log("Height changed:", newVal);
+// });
+
+
 </script>
 <template>
   <!-- 增加 gutter 控制列间距，margin-bottom 控制行间距 -->
@@ -103,7 +131,7 @@ const animationSpeed = ref(50)
       <div class="label-wrap">
         <span>生成算法:</span>
         <el-cascader
-          v-model="value"
+          v-model="genAlgo"
           :options="generateOptions"
           :props="props"
           style="width: 100%"
@@ -119,13 +147,22 @@ const animationSpeed = ref(50)
     <el-col :span="12">
       <div class="label-wrap">
         <span>求解算法:</span>
-        <el-cascader v-model="value" :options="solveOptions" :props="props" style="width: 100%" />
+        <el-cascader v-model="solveAlgo" :options="solveOptions" :props="props" style="width: 100%" />
       </div>
     </el-col>
     <el-col :span="12">
       <el-button type="primary" style="width: 100%">求解</el-button>
     </el-col>
   </el-row>
+
+  <!-- <el-row :gutter="50" class="control-row">
+    <el-col :span="24">
+      <div class="label-wrap">
+        <span>随机数种子:</span>
+        <el-switch v-model="isAnimate" style="margin-left: 10px" />
+      </div>
+    </el-col>
+  </el-row> -->
 
   <el-row :gutter="50" class="control-row">
     <el-col :span="24">
