@@ -110,56 +110,27 @@ const renderMaze = () => {
   })
 }
 
+//TODO: 实现动画渲染迷宫的生成
 // 动画渲染迷宫（基于isWall）
 const animateMaze = async () => {
-  if (!ctx || !store.grid || !store.solveSteps.length) return
+  if (!ctx || !store.grid) return
 
-  const { grid, cellSize, solveSteps, animationSpeed } = store
+  const { grid, cellSize,  animationSpeed } = store
   const offsetX = (canvasWidth.value - grid[0].length * cellSize) / 2
   const offsetY = (canvasHeight.value - grid.length * cellSize) / 2
 
   // 逐步骤动画
-  for (let i = 0; i < solveSteps.length; i++) {
-    const step = solveSteps[i]
-
-    // 1. 绘制基础迷宫（墙和路径）
+  
     grid.forEach((row) => {
       row.forEach((cell) => {
         const x = offsetX + cell.col * cellSize
         const y = offsetY + cell.row * cellSize
-        drawCell(cell, x, y, cellSize)
+        setTimeout(drawCell(cell, x, y, cellSize), animationSpeed)
       })
     })
-
-    // 2. 绘制已访问格子（淡蓝色）
-    step.visited.forEach((visitedCell) => {
-      const x = offsetX + visitedCell.col * cellSize
-      const y = offsetY + visitedCell.row * cellSize
-      ctx.fillStyle = '#E3F2FD'
-      ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2) // 留1px边距
-    })
-
-    // 3. 绘制当前探索位置（蓝色）
-    if (step.current) {
-      const x = offsetX + step.current.col * cellSize
-      const y = offsetY + step.current.row * cellSize
-      ctx.fillStyle = '#2196F3'
-      ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2)
-    }
-
-    // 4. 最后一步绘制最短路径（橙色）
-    if (i === solveSteps.length - 1 && store.shortestPath.length > 0) {
-      store.shortestPath.forEach((pathCell) => {
-        const x = offsetX + pathCell.col * cellSize
-        const y = offsetY + pathCell.row * cellSize
-        ctx.fillStyle = '#FF9800'
-        ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2)
-      })
-    }
-
     // 控制动画速度
-    await new Promise((resolve) => setTimeout(resolve, animationSpeed))
-  }
+    
+  
 }
 
 // 处理画布点击
@@ -197,7 +168,9 @@ watch(
   () => {
     if (store.grid) {
       calculateCellSize()
+      console.log(store.isAnimate)
       store.isAnimate ? animateMaze() : renderMaze()
+
     }
   },
   { deep: true },

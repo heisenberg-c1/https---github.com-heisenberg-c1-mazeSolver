@@ -39,7 +39,7 @@ const getWallNeighbors = (grid, row, col, height, width) => {
   return walls
 }
 
-export const generateMaze = (width, height, startRow, startCol) => {
+export const generateMazeByPrim = (width, height, startRow, startCol) => {
   // 初始化所有格子为墙（isWall: true）
   const grid = Array.from({ length: height }, (_, row) =>
     Array.from({ length: width }, (_, col) => ({
@@ -50,20 +50,19 @@ export const generateMaze = (width, height, startRow, startCol) => {
     })),
   )
 
-  // 起点必须是奇数坐标
-  const safeStartRow = startRow
-  const safeStartCol = startCol
+
 
   // 起点设为路径（非墙），并标记为已访问
-  const start = grid[safeStartRow][safeStartCol]
+  const start = grid[startRow][startCol]
   start.isWall = false
   start.visited = true
 
   // 使用优先队列（这里用数组模拟，随机选择）
-  let walls = getWallNeighbors(grid, safeStartRow, safeStartCol, height, width)
+  //TODO：优化为优先队列（最小堆）
+  let walls = getWallNeighbors(grid, startRow, startCol, height, width)
 
   while (walls.length > 0) {
-    // 随机选择一面墙（Prim算法的核心）
+    // 随机选择一面墙
     const randomIndex = Math.floor(Math.random() * walls.length)
     const { wall, neighbor } = walls.splice(randomIndex, 1)[0]
 

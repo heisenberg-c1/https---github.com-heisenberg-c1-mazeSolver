@@ -34,14 +34,11 @@ const generateOptions = [
 // 选择起点：调用 Pinia 方法设置选择模式
 const handleSelectStart = () => {
   mazeStore.setSelectionMode('start');
-  // 可选：添加提示（如“请点击画布选择起点”）
-  console.log('请点击迷宫画布选择起点');
 };
 
 // 选择终点：调用 Pinia 方法设置选择模式
 const handleSelectEnd = () => {
   mazeStore.setSelectionMode('end');
-  console.log('请点击迷宫画布选择终点');
 };
 
 // 生成迷宫：调用 Pinia 的 generateMaze Action（核心）
@@ -49,13 +46,13 @@ const handleGenerate = () => {
   mazeStore.generateMaze(); // 触发生成逻辑，更新 grid/start/end 状态
 };
 
-// 求解迷宫：预留方法（后续实现 solveMaze Action 后启用）
+// 求解迷宫：预留方法
 const handleSolve = () => {
   if (!mazeStore.grid) {
     console.log('请先生成迷宫');
     return;
   }
-  mazeStore.solveMaze(); // 后续补充求解 Action 后生效
+  mazeStore.solveMaze(); 
 };
 
 onMounted(() => {

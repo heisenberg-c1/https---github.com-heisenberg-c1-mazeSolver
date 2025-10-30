@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import { generateMaze } from '@/alogorithms/generators/Prim.js'
+// import { generateMazeByPrim } from '@/alogorithms/generators/Prim.js'
+import { generateMazeByKruskal } from '@/alogorithms/generators/Kruskal.js'
 export const useMazeStore = defineStore('maze', {
   state: () => ({
     // 迷宫参数
@@ -55,10 +56,11 @@ export const useMazeStore = defineStore('maze', {
       this.visitedCount = 0 
 
       try {
-        const result = generateMaze(this.width, this.height, 1, 1)
-        this.grid = result.grid 
-        this.start = result.start 
-        this.end = result.end 
+        const result = generateMazeByKruskal(this.width, this.height, 1, 1)
+        this.grid = result 
+        this.start = {row: 1, col: 1}
+        this.end = {row: this.height - 2, col: this.width - 2}
+        console.log(this.grid)
       } catch (error) {
         console.error('迷宫生成失败：', error)
       } finally {
