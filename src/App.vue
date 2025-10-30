@@ -127,6 +127,7 @@ import MazeCanvas from './components/MazeCanvas.vue';
   align-items: center;
   justify-content: center;
   color: #999;
+  padding:  0 12%;
 }
 
 
