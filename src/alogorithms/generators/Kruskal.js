@@ -1,5 +1,4 @@
-export class disjointSet {
-    
+class disjointSet {
     constructor(size) {
         this.parent = new Array(size);
         this.rank = new Array(size);
@@ -37,10 +36,6 @@ export class disjointSet {
         }
     }
 }
-
-
-
-
 
 export const generateMazeByKruskal = (width, height, startRow, startCol) => {
   // 初始化迷宫：所有格子都是墙
@@ -86,7 +81,6 @@ export const generateMazeByKruskal = (width, height, startRow, startCol) => {
 
   // 开始构建迷宫
   for (const edge of edges) {
-    console.log(grid)
     const { from, to, wall } = edge
     const idxFrom = getIndex(from.row, from.col)
     const idxTo = getIndex(to.row, to.col)
@@ -101,12 +95,11 @@ export const generateMazeByKruskal = (width, height, startRow, startCol) => {
   }
 
   
-  // 设置起点和终点为通路
-  grid[startRow][startCol].isWall = false
-  // 可选：设置终点（比如右下角）
+
   const endRow = height - 2
   const endCol = width - 2
   grid[endRow][endCol].isWall = false
+  grid[startRow][startCol].isWall = false
 
   return grid
 }

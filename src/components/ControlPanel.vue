@@ -4,28 +4,27 @@ import { useMazeStore } from '@/stores/MazeStore';
 import { storeToRefs } from 'pinia'
 
 const mazeStore = useMazeStore();
-// 解构响应式状态（storeToRefs 保持响应式）
 const {
   height, width, isAnimate, animationSpeed, genAlgo, solveAlgo,
-  isGenerating, isSolving // 新增：用于控制按钮禁用
+  isGenerating, isSolving 
 } = storeToRefs(mazeStore);
 
-// 级联选择器配置
 const props = {
   expandTrigger: 'hover',
-  value: 'value', // 补充：指定选项值的字段（避免绑定异常）
-  label: 'label'  // 补充：指定选项文本的字段
+  value: 'value', 
+  label: 'label',
+  emitPath: false
 };
 
-// 求解算法选项（保持不变）
+// 求解算法
 const solveOptions = [
-  { value: 'DFS', label: 'DFS', children: [{ value: 'dfs-recursive', label: '递归实现' }, { value: 'dfs-iterative', label: '递推实现' }] },
-  { value: 'BFS', label: 'BFS', children: [{ value: 'bfs-recursive', label: '递归实现' }, { value: 'bfs-iterative', label: '递推实现' }] },
+  { value: 'dfs', label: 'DFS', children: [{ value: 'dfs-recursive', label: '递归实现' }, { value: 'dfs-iterative', label: '递推实现' }] },
+  { value: 'bfs', label: 'BFS'},
   { value: 'AStar', label: 'A*' },
-  { value: 'Dijkstra', label: 'Dijkstra' }
+  { value: 'dijkstra', label: 'Dijkstra' }
 ];
 
-// 生成算法选项（保持不变）
+// 生成算法
 const generateOptions = [
   { value: 'Prim', label: 'Prim' },
   { value: 'Kruskal', label: 'Kruskal' }
@@ -52,12 +51,22 @@ const handleSolve = () => {
     console.log('请先生成迷宫');
     return;
   }
+  console.log('开始求解迷宫');
   mazeStore.solveMaze(); 
 };
 
 onMounted(() => {
   console.log("MazeStore", mazeStore);
 });
+
+
+
+
+// import { watch } from 'vue';
+// watch(mazeStore.solveAlgo, () => {
+//   console.log("生成算法选择更改为:", mazeStore.solveAlgo);
+// });
+
 </script>
 
 <template>
@@ -142,7 +151,7 @@ onMounted(() => {
     </el-col>
   </el-row>
 
-  <!-- 求解迷宫行（预留） -->
+  <!-- 求解迷宫 -->
   <el-row :gutter="50" class="control-row">
     <el-col :span="12">
       <div class="label-wrap">

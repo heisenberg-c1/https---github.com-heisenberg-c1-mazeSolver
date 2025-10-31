@@ -1,4 +1,3 @@
-/*获取指定单元格的所有相邻墙和邻居*/
 const getWallNeighbors = (grid, row, col, height, width) => {
   const walls = []
 
@@ -40,12 +39,11 @@ const getWallNeighbors = (grid, row, col, height, width) => {
 }
 
 export const generateMazeByPrim = (width, height, startRow, startCol) => {
-  // 初始化所有格子为墙（isWall: true）
   const grid = Array.from({ length: height }, (_, row) =>
     Array.from({ length: width }, (_, col) => ({
       row,
       col,
-      isWall: true, // 墙标记
+      isWall: true, 
       visited: false,
     })),
   )
