@@ -20,7 +20,7 @@ const props = {
 const solveOptions = [
   { value: 'dfs', label: 'DFS', children: [{ value: 'dfs-recursive', label: '递归实现' }, { value: 'dfs-iterative', label: '递推实现' }] },
   { value: 'bfs', label: 'BFS'},
-  { value: 'AStar', label: 'A*' },
+  { value: 'astar', label: 'A*' },
   { value: 'dijkstra', label: 'Dijkstra' }
 ];
 

@@ -3,7 +3,8 @@ import { defineStore } from 'pinia'
 import { generateMazeByKruskal } from '@/alogorithms/generators/Kruskal.js'
 import { solveMazeByDFSRecursive } from '@/alogorithms/solvers/dfs.js'
 import { solveMazeByBFS } from '@/alogorithms/solvers/bfs.js'
-
+import { solveMazeByAStar } from '@/alogorithms/solvers/aStar.js'
+import { solveMazeByDijkstra } from '@/alogorithms/solvers/dijkstra.js'
 
 export const useMazeStore = defineStore('maze', {
   state: () => ({
@@ -41,9 +42,7 @@ export const useMazeStore = defineStore('maze', {
       return state.height * state.width
     },
     visitedCells(state) {
-      return state.solveSteps.length > 0
-        ? state.solveSteps[state.solveSteps.length - 1].visited.length
-        : 0
+      return state.visitedCount
     },
   },
 
@@ -97,24 +96,24 @@ export const useMazeStore = defineStore('maze', {
             result = solveMazeByBFS(this.grid, this.start, this.end)
             break
           case 'astar':
+            result = solveMazeByAStar(this.grid, this.start, this.end)
             break
           case 'dijkstra':
+            result = solveMazeByDijkstra(this.grid, this.start, this.end)
             break
           default:
-            console.warn('未知的求解算法:', this.solveAlgo)
             return
         }
         
         const endTime = performance.now()
         
         this.solveSteps = result.steps
+        
         this.shortestPath = result.path
         this.pathLength = result.path.length
-        this.visitedCount = result.steps.length > 0 
-          ? result.steps[result.steps.length - 1].visited.length 
-          : 0
+        this.visitedCount = result.steps.length
         this.timeTaken = endTime - startTime
-        
+        console.log('求解步骤:', this.solveSteps)
         console.log(`求解完成，耗时: ${this.timeTaken.toFixed(2)}ms`)
         console.log('求解步骤数:', this.solveSteps.length)
         console.log('最短路径长度:', this.shortestPath.length)

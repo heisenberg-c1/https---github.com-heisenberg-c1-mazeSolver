@@ -126,14 +126,11 @@ const animateSolution = async () => {
   const offsetX = (canvasWidth.value - grid[0].length * cellSize) / 2
   const offsetY = (canvasHeight.value - grid.length * cellSize) / 2
 
-  // 逐步骤动画
   for (let i = 0; i < solveSteps.length; i++) {
     const step = solveSteps[i]
 
-    // 清空画布
     ctx.clearRect(0, 0, canvasWidth.value, canvasHeight.value)
 
-    // 1. 绘制基础迷宫（墙和路径）
     grid.forEach((row) => {
       row.forEach((cell) => {
         const x = offsetX + cell.col * cellSize
@@ -143,60 +140,72 @@ const animateSolution = async () => {
     })
 
     // 2. 绘制已访问格子（浅蓝色 - 表示被探索过的点）
-    if (step.visited) {
-      step.visited.forEach((visitedCell) => {
-        // 跳过起点和终点
-        if (
-          (store.start && visitedCell.row === store.start.row && visitedCell.col === store.start.col) ||
-          (store.end && visitedCell.row === store.end.row && visitedCell.col === store.end.col)
-        ) {
-          return
-        }
+    // if (step) {
+    //   step.visited.forEach((visitedCell) => {
+    //     // 跳过起点和终点
+    //     if (
+    //       (store.start && visitedCell.row === store.start.row && visitedCell.col === store.start.col) ||
+    //       (store.end && visitedCell.row === store.end.row && visitedCell.col === store.end.col)
+    //     ) {
+    //       return
+    //     }
         
-        const x = offsetX + visitedCell.col * cellSize
-        const y = offsetY + visitedCell.row * cellSize
-        ctx.fillStyle = '#1E90FF' // 浅蓝色
-        ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2) // 留1px边距
-      })
-    }
+    //     const x = offsetX + visitedCell.col * cellSize
+    //     const y = offsetY + visitedCell.row * cellSize
+    //     ctx.fillStyle = '#1E90FF' // 浅蓝色
+    //     ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2) // 留1px边距
+    //   })
+    // }
 
-    // 3. 绘制当前探索位置（深蓝色）
-    if (step.current) {
-      // 跳过起点和终点
-      if (
-        !(store.start && step.current.row === store.start.row && step.current.col === store.start.col) &&
-        !(store.end && step.current.row === store.end.row && step.current.col === store.end.col)
-      ) {
-        const x = offsetX + step.current.col * cellSize
-        const y = offsetY + step.current.row * cellSize
-        ctx.fillStyle = '#2196F3' // 深蓝色
-        ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2)
-      }
+    // 绘制当前探索位置（深蓝色）
+   for (let j = 0; j <= i; j++) {  // 从0到当前步骤i
+    const visitedStep = solveSteps[j]
+    
+    // 跳过起点和终点
+    if (
+      !(store.start && visitedStep.row === store.start.row && visitedStep.col === store.start.col) &&
+      !(store.end && visitedStep.row === store.end.row && visitedStep.col === store.end.col)
+    ) {
+      const x = offsetX + visitedStep.col * cellSize
+      const y = offsetY + visitedStep.row * cellSize
+      ctx.fillStyle = '#1E90FF' // 浅蓝色 - 已访问
+      ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2)
     }
-
-    // 4. 最后一步绘制最短路径（橙色）
-    if (i === solveSteps.length - 1 && store.shortestPath.length > 0) {
-      store.shortestPath.forEach((pathCell) => {
-        // 跳过起点和终点
-        if (
-          (store.start && pathCell.row === store.start.row && pathCell.col === store.start.col) ||
-          (store.end && pathCell.row === store.end.row && pathCell.col === store.end.col)
-        ) {
-          return
-        }
-        
-        const x = offsetX + pathCell.col * cellSize
-        const y = offsetY + pathCell.row * cellSize
-        ctx.fillStyle = '#FF9800' // 橙色
-        ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2)
-      })
-    }
-
-    // 控制动画速度
-    await new Promise((resolve) => setTimeout(resolve, animationSpeed))
   }
-}
 
+  // 3. 绘制当前探索位置（深蓝色）
+  if (step) {
+    if (
+      !(store.start && step.row === store.start.row && step.col === store.start.col) &&
+      !(store.end && step.row === store.end.row && step.col === store.end.col)
+    ) {
+      const x = offsetX + step.col * cellSize
+      const y = offsetY + step.row * cellSize
+      ctx.fillStyle = '#2196F3' // 深蓝色 - 当前位置
+      ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2)
+    }
+  }
+
+  // 4. 最后一步绘制最短路径
+  if (i === solveSteps.length - 1 && store.shortestPath.length > 0) {
+    store.shortestPath.forEach((pathCell) => {
+      if (
+        (store.start && pathCell.row === store.start.row && pathCell.col === store.start.col) ||
+        (store.end && pathCell.row === store.end.row && pathCell.col === store.end.col)
+      ) {
+        return
+      }
+      
+      const x = offsetX + pathCell.col * cellSize
+      const y = offsetY + pathCell.row * cellSize
+      ctx.fillStyle = '#FF9800' // 橙色 - 最短路径
+      ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2)
+    })
+  }
+
+  await new Promise((resolve) => setTimeout(resolve, animationSpeed))
+}
+}
 // 渲染最终解决方案（包含所有探索过的点和最短路径）
 const renderSolution = () => {
   if (!ctx || !store.grid) return
@@ -223,19 +232,16 @@ const renderSolution = () => {
   if (store.solveSteps.length > 0) {
     // 从所有步骤中收集访问过的格子
     store.solveSteps.forEach(step => {
-      if (step.visited) {
-        step.visited.forEach(cell => {
-          const key = `${cell.row},${cell.col}`
+      if (step) {
+          const key = `${step.row},${step.col}`
           allVisited.add(key)
-        })
       }
     })
-    
+    console.log("所有访问过的格子:", allVisited)
     // 绘制所有访问过的格子
     allVisited.forEach(key => {
       const [row, col] = key.split(',').map(Number)
       
-      // 跳过起点和终点
       if (
         (store.start && row === store.start.row && col === store.start.col) ||
         (store.end && row === store.end.row && col === store.end.col)
@@ -250,10 +256,8 @@ const renderSolution = () => {
     })
   }
 
-  // 3. 绘制最短路径（橙色）
   if (store.shortestPath.length > 0) {
     store.shortestPath.forEach((pathCell) => {
-      // 跳过起点和终点
       if (
         (store.start && pathCell.row === store.start.row && pathCell.col === store.start.col) ||
         (store.end && pathCell.row === store.end.row && pathCell.col === store.end.col)
