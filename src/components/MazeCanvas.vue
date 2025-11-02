@@ -97,7 +97,7 @@ const drawCell = (cell, x, y, cellSize, fillColor = null) => {
   ctx.fillRect(x, y, cellSize, cellSize)
 }
 
-// 基础渲染迷宫（无动画）
+
 const renderMaze = () => {
   if (!ctx || !store.grid) return
 
@@ -120,9 +120,11 @@ const renderMaze = () => {
 
 // 动画渲染迷宫求解过程
 const animateSolution = async () => {
-  if (!ctx || !store.grid || !store.solveSteps.length) return
+  if (!ctx || !store.grid || !store.solveSteps.length) {
+    return
+  }
 
-  const { grid, cellSize, solveSteps, animationSpeed } = store
+  const { grid, cellSize, solveSteps } = store
   const offsetX = (canvasWidth.value - grid[0].length * cellSize) / 2
   const offsetY = (canvasHeight.value - grid.length * cellSize) / 2
 
@@ -139,23 +141,6 @@ const animateSolution = async () => {
       })
     })
 
-    // 2. 绘制已访问格子（浅蓝色 - 表示被探索过的点）
-    // if (step) {
-    //   step.visited.forEach((visitedCell) => {
-    //     // 跳过起点和终点
-    //     if (
-    //       (store.start && visitedCell.row === store.start.row && visitedCell.col === store.start.col) ||
-    //       (store.end && visitedCell.row === store.end.row && visitedCell.col === store.end.col)
-    //     ) {
-    //       return
-    //     }
-        
-    //     const x = offsetX + visitedCell.col * cellSize
-    //     const y = offsetY + visitedCell.row * cellSize
-    //     ctx.fillStyle = '#1E90FF' // 浅蓝色
-    //     ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2) // 留1px边距
-    //   })
-    // }
 
     // 绘制当前探索位置（深蓝色）
    for (let j = 0; j <= i; j++) {  // 从0到当前步骤i
@@ -203,12 +188,14 @@ const animateSolution = async () => {
     })
   }
 
-  await new Promise((resolve) => setTimeout(resolve, animationSpeed))
+  await new Promise((resolve) => setTimeout(resolve, store.animationSpeed / 10))
 }
 }
 // 渲染最终解决方案（包含所有探索过的点和最短路径）
 const renderSolution = () => {
-  if (!ctx || !store.grid) return
+  if (!ctx || !store.grid) {
+    return
+  }
 
   const { grid, cellSize } = store
   const offsetX = (canvasWidth.value - grid[0].length * cellSize) / 2
@@ -347,17 +334,17 @@ watch(
 )
 
 // 监听窗口大小变化
-const handleResize = () => {
+const handleResize = debounce(()=>{
   initCanvas()
-  // 重新渲染当前状态
-  if (store.solveSteps.length > 0 && store.isAnimate) {
-    animateSolution()
-  } else if (store.shortestPath.length > 0) {
-    renderSolution()
-  } else {
+
+  if (store.grid !== null) {
     renderMaze()
   }
-}
+  if (store.shortestPath.length > 0) {
+    renderSolution()
+  }
+  
+}, 100) 
 
 onMounted(() => {
   initCanvas()
@@ -367,6 +354,18 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
 })
+
+function debounce(fn, delay) {
+  let timer = null
+  return function() {
+    clearTimeout(timer)
+    timer = setTimeout(() => fn.apply(this, arguments), delay)
+  }
+}
+
+
+
+
 </script>
 
 <style scoped>
@@ -384,6 +383,9 @@ onUnmounted(() => {
   cursor: pointer;
   border-radius: 4px;
   background: #f5f5f5;
-  display: block; /* 确保canvas是块级元素 */
+  display: block; 
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
 }
 </style>

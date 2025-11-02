@@ -1,5 +1,4 @@
 <script setup>
-import { ref} from 'vue';
 import { useMazeStore } from '@/stores/MazeStore';
 import { storeToRefs } from 'pinia'
 const mazeStore = useMazeStore();
@@ -7,10 +6,10 @@ const mazeStore = useMazeStore();
 
 
 //TODO::时间复杂度动态计算
-const timeComplexityLatex = ref('O(n)'); 
 
 
-const {visitedCells, totalCells, timeTaken, shortestPath} = storeToRefs(mazeStore)
+
+const {visitedCells, totalEmptyCells, timeTaken, shortestPath, timeComplexity} = storeToRefs(mazeStore)
 
 
 </script>
@@ -19,10 +18,9 @@ const {visitedCells, totalCells, timeTaken, shortestPath} = storeToRefs(mazeStor
 
 
 <template>
-  <!-- Visited 独占一行 -->
   <div class="status-item visited-item">
     <span class="status-label">Visited:</span>
-    <span class="status-value">{{ visitedCells }} / {{ totalCells }}</span>
+    <span class="status-value">{{ visitedCells }} / {{ totalEmptyCells }}</span>
   </div>
   <div class="status-item visited-item">
     <span class="status-label">最短路长度:</span>
@@ -33,14 +31,13 @@ const {visitedCells, totalCells, timeTaken, shortestPath} = storeToRefs(mazeStor
     <div class="status-item complexity-item">
       <span class="status-label">求解时间复杂度</span>
       <div class="status-content">
-        <!-- 假设使用 KaTeX 渲染 LaTeX，例如 O(n²) -->
-        <span v-html="timeComplexityLatex"></span>
+        <span v-html="timeComplexity"></span>
       </div>
     </div>
     <div class="status-item time-item">
       <span class="status-label">寻路时间开销</span>
       <div class="status-content">
-        <span>{{ timeTaken }} ms</span>
+        <span>{{ timeTaken.toFixed(4) }} ms</span>
       </div>
     </div>
   </div>

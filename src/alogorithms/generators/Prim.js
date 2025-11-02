@@ -54,7 +54,7 @@ export const generateMazeByPrim = (width, height, startRow, startCol) => {
   const start = grid[startRow][startCol]
   start.isWall = false
   start.visited = true
-
+  
   // 使用优先队列（这里用数组模拟，随机选择）
   //TODO：优化为优先队列（最小堆）
   let walls = getWallNeighbors(grid, startRow, startCol, height, width)

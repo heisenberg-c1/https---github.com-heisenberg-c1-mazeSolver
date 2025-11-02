@@ -12,8 +12,8 @@ export const useMazeStore = defineStore('maze', {
     height: 10,
     width: 15,
     totalCells: 150,
-    genAlgo: 'Prim', // 生成算法
-    solveAlgo: 'dfs-recursive', // 求解算法
+    genAlgo: null, // 生成算法
+    solveAlgo: null, // 求解算法
     seed: null,
     isAnimate: false,
     animationSpeed: 50, // 动画延迟（毫秒）
@@ -44,6 +44,38 @@ export const useMazeStore = defineStore('maze', {
     visitedCells(state) {
       return state.visitedCount
     },
+    totalEmptyCells(state) {
+      if (!state.grid) {
+        console.log('grid is null')
+        return 0
+      }
+      let count = 0
+      for (let row of state.grid) {
+        for (let cell of row) {
+          if (!cell.isWall) {
+            count++
+          }
+        }
+      }
+      return count
+    },
+    timeComplexity(state) {
+      switch (state.solveAlgo) {
+        case 'dfs-recursive':
+          return 'O(N)'
+        case 'dfs-iterative':
+          return 'O(N)'
+        case 'bfs':
+          return 'O(N)'
+        case 'astar':
+          return  'O(N² log N)'
+        case 'dijkstra':
+          return 'O(N² log N)'
+        default:
+          return '待选择求解算法'
+      }
+    }
+
   },
 
   actions: {

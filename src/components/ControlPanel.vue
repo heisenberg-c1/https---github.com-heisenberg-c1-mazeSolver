@@ -1,71 +1,62 @@
 <script setup>
-import { onMounted } from 'vue'
-import { useMazeStore } from '@/stores/MazeStore';
+import { useMazeStore } from '@/stores/MazeStore'
 import { storeToRefs } from 'pinia'
 
-const mazeStore = useMazeStore();
-const {
-  height, width, isAnimate, animationSpeed, genAlgo, solveAlgo,
-  isGenerating, isSolving 
-} = storeToRefs(mazeStore);
+const mazeStore = useMazeStore()
+const { height, width, isAnimate, animationSpeed, genAlgo, solveAlgo } = storeToRefs(mazeStore)
 
 const props = {
   expandTrigger: 'hover',
-  value: 'value', 
+  value: 'value',
   label: 'label',
-  emitPath: false
-};
+  emitPath: false,
+}
 
 // 求解算法
 const solveOptions = [
-  { value: 'dfs', label: 'DFS', children: [{ value: 'dfs-recursive', label: '递归实现' }, { value: 'dfs-iterative', label: '递推实现' }] },
-  { value: 'bfs', label: 'BFS'},
+  {
+    value: 'dfs',
+    label: 'DFS',
+    children: [
+      { value: 'dfs-recursive', label: '递归实现' },
+      { value: 'dfs-iterative', label: '递推实现' },
+    ],
+  },
+  { value: 'bfs', label: 'BFS' },
   { value: 'astar', label: 'A*' },
-  { value: 'dijkstra', label: 'Dijkstra' }
-];
+  { value: 'dijkstra', label: 'Dijkstra' },
+]
 
 // 生成算法
 const generateOptions = [
   { value: 'Prim', label: 'Prim' },
-  { value: 'Kruskal', label: 'Kruskal' }
-];
+  { value: 'Kruskal', label: 'Kruskal' },
+]
 
 // 选择起点：调用 Pinia 方法设置选择模式
 const handleSelectStart = () => {
-  mazeStore.setSelectionMode('start');
-};
+  mazeStore.setSelectionMode('start')
+}
 
 // 选择终点：调用 Pinia 方法设置选择模式
 const handleSelectEnd = () => {
-  mazeStore.setSelectionMode('end');
-};
+  mazeStore.setSelectionMode('end')
+}
 
-// 生成迷宫：调用 Pinia 的 generateMaze Action（核心）
+// 生成迷宫：调用 Pinia 的 generateMaze Action
 const handleGenerate = () => {
-  mazeStore.generateMaze(); // 触发生成逻辑，更新 grid/start/end 状态
-};
+  mazeStore.generateMaze()
+}
 
 // 求解迷宫：预留方法
 const handleSolve = () => {
   if (!mazeStore.grid) {
-    console.log('请先生成迷宫');
-    return;
+    console.log('请先生成迷宫')
+    return
   }
-  console.log('开始求解迷宫');
-  mazeStore.solveMaze(); 
-};
-
-onMounted(() => {
-  console.log("MazeStore", mazeStore);
-});
-
-
-
-
-// import { watch } from 'vue';
-// watch(mazeStore.solveAlgo, () => {
-//   console.log("生成算法选择更改为:", mazeStore.solveAlgo);
-// });
+  // console.log('开始求解迷宫')
+  mazeStore.solveMaze()
+}
 
 </script>
 
@@ -73,7 +64,7 @@ onMounted(() => {
   <!-- 尺寸设置行 -->
   <el-row :gutter="50" class="control-row">
     <el-col :span="12">
-      <div style="display: flex; gap: 10px; align-items: center;">
+      <div style="display: flex; gap: 10px; align-items: center">
         <span>长：</span>
         <el-input-number
           v-model="height"
@@ -81,12 +72,11 @@ onMounted(() => {
           :max="100"
           controls-position="right"
           style="width: 100%"
-          :disabled="isGenerating || isSolving" 
         />
       </div>
     </el-col>
     <el-col :span="12">
-      <div style="display: flex; gap: 10px; align-items: center;">
+      <div style="display: flex; gap: 10px; align-items: center">
         <span>宽：</span>
         <el-input-number
           v-model="width"
@@ -94,7 +84,6 @@ onMounted(() => {
           :max="100"
           controls-position="right"
           style="width: 100%"
-          :disabled="isGenerating || isSolving" 
         />
       </div>
     </el-col>
@@ -103,24 +92,12 @@ onMounted(() => {
   <!-- 选择起点/终点行 -->
   <el-row :gutter="50" class="control-row">
     <el-col :span="12">
-      <el-button 
-        type="primary" 
-        style="width: 100%"
-        @click="handleSelectStart"
-        :disabled="isGenerating || isSolving" 
-      >
+      <el-button type="primary" style="width: 100%" @click="handleSelectStart">
         选择起点
       </el-button>
     </el-col>
     <el-col :span="12">
-      <el-button 
-        type="primary" 
-        style="width: 100%"
-        @click="handleSelectEnd"
-        :disabled="isGenerating || isSolving" 
-      >
-        选择终点
-      </el-button>
+      <el-button type="primary" style="width: 100%" @click="handleSelectEnd"> 选择终点 </el-button>
     </el-col>
   </el-row>
 
@@ -134,19 +111,12 @@ onMounted(() => {
           :options="generateOptions"
           :props="props"
           style="width: 100%"
-          :disabled="isGenerating || isSolving" 
         />
       </div>
     </el-col>
     <el-col :span="12">
-      <el-button 
-        type="primary" 
-        style="width: 100%"
-        @click="handleGenerate"
-        :disabled="isGenerating || isSolving" 
-      >
-        <span v-if="!isGenerating">生成</span>
-        <span v-if="isGenerating">生成中...</span> 
+      <el-button type="primary" style="width: 100%" @click="handleGenerate">
+        <span>生成</span>
       </el-button>
     </el-col>
   </el-row>
@@ -156,24 +126,17 @@ onMounted(() => {
     <el-col :span="12">
       <div class="label-wrap">
         <span>求解算法:</span>
-        <el-cascader 
-          v-model="solveAlgo" 
-          :options="solveOptions" 
-          :props="props" 
+        <el-cascader
+          v-model="solveAlgo"
+          :options="solveOptions"
+          :props="props"
           style="width: 100%"
-          :disabled="!mazeStore.grid || isGenerating || isSolving" 
         />
       </div>
     </el-col>
     <el-col :span="12">
-      <el-button 
-        type="primary" 
-        style="width: 100%"
-        @click="handleSolve"
-        :disabled="!mazeStore.grid || isGenerating || isSolving" 
-      >
-        <span v-if="!isSolving">求解</span>
-        <span v-if="isSolving">求解中...</span>
+      <el-button type="primary" style="width: 100%" @click="handleSolve">
+        <span>求解</span>
       </el-button>
     </el-col>
   </el-row>
@@ -182,12 +145,8 @@ onMounted(() => {
   <el-row :gutter="50" class="control-row">
     <el-col :span="24">
       <div class="label-wrap">
-        <span>动画效果:</span>
-        <el-switch 
-          v-model="isAnimate" 
-          style="margin-left: 10px"
-          :disabled="isGenerating || isSolving" 
-        />
+        <span>求解动画效果:</span>
+        <el-switch v-model="isAnimate" style="margin-left: 10px" />
       </div>
     </el-col>
   </el-row>
@@ -196,14 +155,13 @@ onMounted(() => {
   <el-row :gutter="50" class="control-row" v-if="isAnimate">
     <el-col :span="24">
       <div class="label-wrap">
-        <span>动画速度:</span>
-        <el-slider 
-          v-model="animationSpeed" 
-          style="margin-left: 10px; flex: 1" 
-          :min="10" 
-          :max="300" 
+        <span>动画延迟:</span>
+        <el-slider
+          v-model="animationSpeed"
+          style="margin-left: 10px; flex: 1"
+          :min="10"
+          :max="300"
           :step="10"
-          :disabled="isGenerating || isSolving" 
         />
       </div>
     </el-col>
