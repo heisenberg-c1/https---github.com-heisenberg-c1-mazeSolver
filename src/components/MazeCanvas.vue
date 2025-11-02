@@ -25,10 +25,14 @@ const canvasHeight = ref(0)
 // 初始化画布
 const initCanvas = async () => {
   await nextTick()
-  if (!canvasRef.value) return
+  if (!canvasRef.value) {
+    return
+  }
 
   const container = canvasRef.value.parentElement
-  if (!container) return
+  if (!container) {
+    return
+  }
 
   // 获取容器尺寸（减去padding）
   const containerRect = container.getBoundingClientRect()
@@ -97,7 +101,6 @@ const drawCell = (cell, x, y, cellSize, fillColor = null) => {
   ctx.fillRect(x, y, cellSize, cellSize)
 }
 
-
 const renderMaze = () => {
   if (!ctx || !store.grid) return
 
@@ -141,55 +144,59 @@ const animateSolution = async () => {
       })
     })
 
-
     // 绘制当前探索位置（深蓝色）
-   for (let j = 0; j <= i; j++) {  // 从0到当前步骤i
-    const visitedStep = solveSteps[j]
-    
-    // 跳过起点和终点
-    if (
-      !(store.start && visitedStep.row === store.start.row && visitedStep.col === store.start.col) &&
-      !(store.end && visitedStep.row === store.end.row && visitedStep.col === store.end.col)
-    ) {
-      const x = offsetX + visitedStep.col * cellSize
-      const y = offsetY + visitedStep.row * cellSize
-      ctx.fillStyle = '#1E90FF' // 浅蓝色 - 已访问
-      ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2)
-    }
-  }
+    for (let j = 0; j <= i; j++) {
+      // 从0到当前步骤i
+      const visitedStep = solveSteps[j]
 
-  // 3. 绘制当前探索位置（深蓝色）
-  if (step) {
-    if (
-      !(store.start && step.row === store.start.row && step.col === store.start.col) &&
-      !(store.end && step.row === store.end.row && step.col === store.end.col)
-    ) {
-      const x = offsetX + step.col * cellSize
-      const y = offsetY + step.row * cellSize
-      ctx.fillStyle = '#2196F3' // 深蓝色 - 当前位置
-      ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2)
-    }
-  }
-
-  // 4. 最后一步绘制最短路径
-  if (i === solveSteps.length - 1 && store.shortestPath.length > 0) {
-    store.shortestPath.forEach((pathCell) => {
+      // 跳过起点和终点
       if (
-        (store.start && pathCell.row === store.start.row && pathCell.col === store.start.col) ||
-        (store.end && pathCell.row === store.end.row && pathCell.col === store.end.col)
+        !(
+          store.start &&
+          visitedStep.row === store.start.row &&
+          visitedStep.col === store.start.col
+        ) &&
+        !(store.end && visitedStep.row === store.end.row && visitedStep.col === store.end.col)
       ) {
-        return
+        const x = offsetX + visitedStep.col * cellSize
+        const y = offsetY + visitedStep.row * cellSize
+        ctx.fillStyle = '#1E90FF' // 浅蓝色 - 已访问
+        ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2)
       }
-      
-      const x = offsetX + pathCell.col * cellSize
-      const y = offsetY + pathCell.row * cellSize
-      ctx.fillStyle = '#FF9800' // 橙色 - 最短路径
-      ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2)
-    })
-  }
+    }
 
-  await new Promise((resolve) => setTimeout(resolve, store.animationSpeed / 10))
-}
+    // 3. 绘制当前探索位置（深蓝色）
+    if (step) {
+      if (
+        !(store.start && step.row === store.start.row && step.col === store.start.col) &&
+        !(store.end && step.row === store.end.row && step.col === store.end.col)
+      ) {
+        const x = offsetX + step.col * cellSize
+        const y = offsetY + step.row * cellSize
+        ctx.fillStyle = '#2196F3' // 深蓝色 - 当前位置
+        ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2)
+      }
+    }
+
+    // 4. 最后一步绘制最短路径
+    if (i === solveSteps.length - 1 && store.shortestPath.length > 0) {
+      store.shortestPath.forEach((pathCell) => {
+        if (
+          (store.start && pathCell.row === store.start.row && pathCell.col === store.start.col) ||
+          (store.end && pathCell.row === store.end.row && pathCell.col === store.end.col)
+        ) {
+          return
+        }
+
+        const x = offsetX + pathCell.col * cellSize
+        const y = offsetY + pathCell.row * cellSize
+        ctx.fillStyle = '#FF9800' // 橙色 - 最短路径
+        ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2)
+      })
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, store.animationSpeed / 10))
+  }
 }
 // 渲染最终解决方案（包含所有探索过的点和最短路径）
 const renderSolution = () => {
@@ -215,30 +222,30 @@ const renderSolution = () => {
 
   // 2. 收集所有被访问过的格子（如果有求解步骤）
   const allVisited = new Set()
-  
+
   if (store.solveSteps.length > 0) {
     // 从所有步骤中收集访问过的格子
-    store.solveSteps.forEach(step => {
+    store.solveSteps.forEach((step) => {
       if (step) {
-          const key = `${step.row},${step.col}`
-          allVisited.add(key)
+        const key = `${step.row},${step.col}`
+        allVisited.add(key)
       }
     })
-    console.log("所有访问过的格子:", allVisited)
+    console.log('所有访问过的格子:', allVisited)
     // 绘制所有访问过的格子
-    allVisited.forEach(key => {
+    allVisited.forEach((key) => {
       const [row, col] = key.split(',').map(Number)
-      
+
       if (
         (store.start && row === store.start.row && col === store.start.col) ||
         (store.end && row === store.end.row && col === store.end.col)
       ) {
         return
       }
-      
+
       const x = offsetX + col * cellSize
       const y = offsetY + row * cellSize
-      ctx.fillStyle = '#1E90FF' 
+      ctx.fillStyle = '#1E90FF'
       ctx.fillRect(x + 1, y + 1, cellSize - 2, cellSize - 2)
     })
   }
@@ -251,7 +258,7 @@ const renderSolution = () => {
       ) {
         return
       }
-      
+
       const x = offsetX + pathCell.col * cellSize
       const y = offsetY + pathCell.row * cellSize
       ctx.fillStyle = '#FF9800' // 橙色
@@ -308,7 +315,7 @@ watch(
       }
     }
   },
-  { deep: true }
+  { deep: true },
 )
 
 // 监听求解步骤变化（用于动画）
@@ -319,7 +326,7 @@ watch(
       animateSolution()
     }
   },
-  { deep: true }
+  { deep: true },
 )
 
 // 监听最短路径变化
@@ -330,12 +337,12 @@ watch(
       renderSolution()
     }
   },
-  { deep: true }
+  { deep: true },
 )
 
 // 监听窗口大小变化
-const handleResize = debounce(()=>{
-  initCanvas()
+const handleResize = debounce(async () => {
+  await initCanvas()
 
   if (store.grid !== null) {
     renderMaze()
@@ -343,8 +350,7 @@ const handleResize = debounce(()=>{
   if (store.shortestPath.length > 0) {
     renderSolution()
   }
-  
-}, 100) 
+}, 100)
 
 onMounted(() => {
   initCanvas()
@@ -357,15 +363,11 @@ onUnmounted(() => {
 
 function debounce(fn, delay) {
   let timer = null
-  return function() {
+  return function () {
     clearTimeout(timer)
     timer = setTimeout(() => fn.apply(this, arguments), delay)
   }
 }
-
-
-
-
 </script>
 
 <style scoped>
@@ -383,7 +385,7 @@ function debounce(fn, delay) {
   cursor: pointer;
   border-radius: 4px;
   background: #f5f5f5;
-  display: block; 
+  display: block;
   object-fit: contain;
   max-width: 100%;
   max-height: 100%;

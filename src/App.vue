@@ -194,7 +194,7 @@ import MazeCanvas from './components/MazeCanvas.vue';
 
   .maze-show, .panel-show {
     flex: none;
-    height: 50%;
+    height: auto;
   }
 
   .panel-show {

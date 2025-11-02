@@ -3,19 +3,10 @@ import { useMazeStore } from '@/stores/MazeStore';
 import { storeToRefs } from 'pinia'
 const mazeStore = useMazeStore();
 
-
-
-//TODO::时间复杂度动态计算
-
-
-
 const {visitedCells, totalEmptyCells, timeTaken, shortestPath, timeComplexity} = storeToRefs(mazeStore)
 
 
 </script>
-
-
-
 
 <template>
   <div class="status-item visited-item">
@@ -52,6 +43,7 @@ const {visitedCells, totalEmptyCells, timeTaken, shortestPath, timeComplexity} =
   display: flex;
   gap: 15px; /* 两列之间的间距 */
   margin-top: 15px; /* 与上方visited的间距 */
+  
 }
 
 /* 每个状态项的基础样式 */
@@ -87,8 +79,57 @@ const {visitedCells, totalEmptyCells, timeTaken, shortestPath, timeComplexity} =
   font-weight: 500;
 }
 
-/* LaTeX公式适配（如果使用KaTeX，可能需要调整行高） */
 .status-content {
   line-height: 1.5;
 }
+
+@media (max-width: 768px) {
+  .status-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .complexity-item, .time-item {
+    flex: none;
+  }
+  
+  .status-label {
+    font-size: 13px;
+  }
+  
+  .status-value, .status-content {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .status-item {
+    padding: 8px;
+  }
+  
+  .status-label {
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
+  
+  .status-value, .status-content {
+    font-size: 13px;
+  }
+  
+  .status-row {
+    margin-top: 10px;
+    gap: 8px;
+  }
+  
+  .visited-item {
+    margin-bottom: 10px;
+  }
+}
+
+
+
+
+
+
+
 </style>

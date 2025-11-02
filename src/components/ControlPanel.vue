@@ -63,7 +63,7 @@ const handleSolve = () => {
 <template>
   <!-- 尺寸设置行 -->
   <el-row :gutter="50" class="control-row">
-    <el-col :span="12">
+    <el-col :xs="24" :sm="12" :md="12" :lg="12"> 
       <div style="display: flex; gap: 10px; align-items: center">
         <span>长：</span>
         <el-input-number
@@ -75,7 +75,7 @@ const handleSolve = () => {
         />
       </div>
     </el-col>
-    <el-col :span="12">
+    <el-col :xs="24" :sm="12" :md="12" :lg="12"> 
       <div style="display: flex; gap: 10px; align-items: center">
         <span>宽：</span>
         <el-input-number
@@ -91,19 +91,19 @@ const handleSolve = () => {
 
   <!-- 选择起点/终点行 -->
   <el-row :gutter="50" class="control-row">
-    <el-col :span="12">
+    <el-col :xs="24" :sm="12" :md="12" :lg="12"> 
       <el-button type="primary" style="width: 100%" @click="handleSelectStart">
         选择起点
       </el-button>
     </el-col>
-    <el-col :span="12">
+    <el-col :xs="24" :sm="12" :md="12" :lg="12"> 
       <el-button type="primary" style="width: 100%" @click="handleSelectEnd"> 选择终点 </el-button>
     </el-col>
   </el-row>
 
   <!-- 生成迷宫行 -->
   <el-row :gutter="50" class="control-row">
-    <el-col :span="12">
+    <el-col :xs="24" :sm="12" :md="12" :lg="12"> 
       <div class="label-wrap">
         <span>生成算法:</span>
         <el-cascader
@@ -114,7 +114,7 @@ const handleSolve = () => {
         />
       </div>
     </el-col>
-    <el-col :span="12">
+    <el-col :xs="24" :sm="12" :md="12" :lg="12"> 
       <el-button type="primary" style="width: 100%" @click="handleGenerate">
         <span>生成</span>
       </el-button>
@@ -123,7 +123,7 @@ const handleSolve = () => {
 
   <!-- 求解迷宫 -->
   <el-row :gutter="50" class="control-row">
-    <el-col :span="12">
+    <el-col :xs="24" :sm="12" :md="12" :lg="12"> 
       <div class="label-wrap">
         <span>求解算法:</span>
         <el-cascader
@@ -134,7 +134,7 @@ const handleSolve = () => {
         />
       </div>
     </el-col>
-    <el-col :span="12">
+    <el-col :xs="24" :sm="12" :md="12" :lg="12"> 
       <el-button type="primary" style="width: 100%" @click="handleSolve">
         <span>求解</span>
       </el-button>
@@ -143,7 +143,7 @@ const handleSolve = () => {
 
   <!-- 动画设置行 -->
   <el-row :gutter="50" class="control-row">
-    <el-col :span="24">
+    <el-col :xs="24" :sm="12" :md="12" :lg="12"> 
       <div class="label-wrap">
         <span>求解动画效果:</span>
         <el-switch v-model="isAnimate" style="margin-left: 10px" />
@@ -153,7 +153,7 @@ const handleSolve = () => {
 
   <!-- 动画速度行（仅动画开启时显示） -->
   <el-row :gutter="50" class="control-row" v-if="isAnimate">
-    <el-col :span="24">
+    <el-col :xs="24" :sm="12" :md="12" :lg="12"> 
       <div class="label-wrap">
         <span>动画延迟:</span>
         <el-slider
