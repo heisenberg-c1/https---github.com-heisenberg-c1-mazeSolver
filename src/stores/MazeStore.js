@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
-import { generateMazeByPrim } from '@/alogorithms/generators/Prim.js'
-import { generateMazeByKruskal } from '@/alogorithms/generators/Kruskal.js'
+import { generateMazeByPrim } from '@/algorithms/generators/Prim.js'
+import { generateMazeByKruskal } from '@/algorithms/generators/Kruskal.js'
 
-import { solveMazeByDFSRecursive, solveMazeByDFSIterative } from '@/alogorithms/solvers/dfs.js'
-import { solveMazeByBFS } from '@/alogorithms/solvers/bfs.js'
-import { solveMazeByAStar } from '@/alogorithms/solvers/aStar.js'
-import { solveMazeByDijkstra } from '@/alogorithms/solvers/dijkstra.js'
+import { solveMazeByDFSRecursive, solveMazeByDFSIterative } from '@/algorithms/solvers/dfs.js'
+import { solveMazeByBFS } from '@/algorithms/solvers/bfs.js'
+import { solveMazeByAStar } from '@/algorithms/solvers/aStar.js'
+import { solveMazeByDijkstra } from '@/algorithms/solvers/dijkstra.js'
 
 export const useMazeStore = defineStore('maze', {
   state: () => ({
