@@ -1,44 +1,6 @@
-class disjointSet {
-    constructor(size) {
-        this.parent = new Array(size);
-        this.rank = new Array(size);
-        for(let i = 0; i < size; i++) {
-            this.parent[i] = i;
-            this.rank[i] = 1;
-        }
-    }
-    find(x) {
-        if (this.parent[x] === x) {
-            return this.parent[x];
-        }
-        //路径压缩
-        return this.parent[x] = this.find(this.parent[x]);
-    }
-
-    isConnected(x, y) {
-        return this.find(x) === this.find(y);
-    }
-
-    connect(x, y) {
-        let xFather = this.find(x);
-        let yFather = this.find(y);
-        if (xFather === yFather) {
-            return;
-        }
-        //按秩合并
-        if (this.rank[xFather] < this.rank[yFather]) {
-            this.parent[xFather] = yFather;
-        } else if (this.rank[xFather] > this.rank[yFather]) {
-            this.parent[yFather] = xFather;
-        } else {
-            this.parent[yFather] = xFather;
-            this.rank[xFather]++;
-        }
-    }
-}
+import { disjointSet } from '../../utils/DisjointSet.js'
 
 export const generateMazeByKruskal = (width, height, startRow, startCol) => {
-  // 初始化迷宫：所有格子都是墙
   const grid = Array.from({ length: height }, (_, row) =>
     Array.from({ length: width }, (_, col) => ({
       row,
@@ -54,7 +16,6 @@ export const generateMazeByKruskal = (width, height, startRow, startCol) => {
   // 辅助函数：二维坐标转一维索引
   const getIndex = (r, c) => r * width + c
 
-  // 构造所有可能的边（即两个格子之间的墙）
   for (let r = 1; r < height; r += 2) {
     for (let c = 1; c < width; c += 2) {
       // 向右连接
@@ -79,7 +40,6 @@ export const generateMazeByKruskal = (width, height, startRow, startCol) => {
   // 随机打乱边
   edges.sort(() => Math.random() - 0.5)
 
-  // 开始构建迷宫
   for (const edge of edges) {
     const { from, to, wall } = edge
     const idxFrom = getIndex(from.row, from.col)
@@ -87,7 +47,6 @@ export const generateMazeByKruskal = (width, height, startRow, startCol) => {
 
     if (!ds.isConnected(idxFrom, idxTo)) {
       ds.connect(idxFrom, idxTo)
-      // 打通格子和中间的墙
       grid[from.row][from.col].isWall = false
       grid[to.row][to.col].isWall = false
       grid[wall.row][wall.col].isWall = false

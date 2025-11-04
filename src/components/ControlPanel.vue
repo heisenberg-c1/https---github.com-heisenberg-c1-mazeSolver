@@ -29,26 +29,22 @@ const solveOptions = [
 
 // 生成算法
 const generateOptions = [
-  { value: 'Prim', label: 'Prim' },
-  { value: 'Kruskal', label: 'Kruskal' },
+  { value: 'prim', label: 'Prim' },
+  { value: 'kruskal', label: 'Kruskal' },
 ]
 
-// 选择起点：调用 Pinia 方法设置选择模式
 const handleSelectStart = () => {
   mazeStore.setSelectionMode('start')
 }
 
-// 选择终点：调用 Pinia 方法设置选择模式
 const handleSelectEnd = () => {
   mazeStore.setSelectionMode('end')
 }
 
-// 生成迷宫：调用 Pinia 的 generateMaze Action
 const handleGenerate = () => {
   mazeStore.generateMaze()
 }
 
-// 求解迷宫：预留方法
 const handleSolve = () => {
   if (!mazeStore.grid) {
     console.log('请先生成迷宫')
@@ -57,6 +53,19 @@ const handleSolve = () => {
   // console.log('开始求解迷宫')
   mazeStore.solveMaze()
 }
+
+
+const handleDimensionChange = (dimension) => {
+  if (dimension === 'height') {
+    if (height.value % 2 === 0) {
+      height.value -= 1;
+    }
+  } else if (dimension === 'width') {
+    if (width.value % 2 === 0) {
+      width.value -= 1;
+    }
+  }
+};
 
 </script>
 
@@ -69,9 +78,11 @@ const handleSolve = () => {
         <el-input-number
           v-model="height"
           :min="2"
-          :max="100"
+          :max="99"
           controls-position="right"
           style="width: 100%"
+          :step="2"
+          @change="handleDimensionChange('height')"
         />
       </div>
     </el-col>
@@ -81,9 +92,11 @@ const handleSolve = () => {
         <el-input-number
           v-model="width"
           :min="2"
-          :max="100"
+          :max="99"
           controls-position="right"
           style="width: 100%"
+          :step="2"
+          @change="handleDimensionChange('width')"
         />
       </div>
     </el-col>
@@ -153,7 +166,7 @@ const handleSolve = () => {
 
   <!-- 动画速度行（仅动画开启时显示） -->
   <el-row :gutter="50" class="control-row" v-if="isAnimate">
-    <el-col :xs="24" :sm="12" :md="12" :lg="12"> 
+    <el-col :xs="24" :sm="12" :md="12" :lg="24"> 
       <div class="label-wrap">
         <span>动画延迟:</span>
         <el-slider

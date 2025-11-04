@@ -1,10 +1,10 @@
+import { BinaryHeap } from '../../utils/BinaryHeap.js'
+
 const getWallNeighbors = (grid, row, col, height, width) => {
   const walls = []
 
   // 上方墙（在(row-1, col)位置，连接(row-2, col)）
   if (row > 1 && !grid[row - 2][col].visited) {
-    // 确保墙不在上边界
-
     walls.push({
       wall: { row: row - 1, col },
       neighbor: grid[row - 2][col],
@@ -48,21 +48,28 @@ export const generateMazeByPrim = (width, height, startRow, startCol) => {
     })),
   )
 
-
-
   // 起点设为路径（非墙），并标记为已访问
   const start = grid[startRow][startCol]
   start.isWall = false
   start.visited = true
   
-  // 使用优先队列（这里用数组模拟，随机选择）
-  //TODO：优化为优先队列（最小堆）
-  let walls = getWallNeighbors(grid, startRow, startCol, height, width)
+  // 使用优先队列替代数组
+  // 可以根据不同策略定义优先级，这里使用随机值
+  const walls = new BinaryHeap((a, b) => a.priority - b.priority)
+  
+  const initialWalls = getWallNeighbors(grid, startRow, startCol, height, width)
+  initialWalls.forEach(wallInfo => {
+    walls.push({
+      wall: wallInfo.wall,
+      neighbor: wallInfo.neighbor,
+      priority: Math.random(), // 随机优先级，保持随机性
+      key: `${wallInfo.wall.row},${wallInfo.wall.col}`
+    })
+  })
 
-  while (walls.length > 0) {
-    // 随机选择一面墙
-    const randomIndex = Math.floor(Math.random() * walls.length)
-    const { wall, neighbor } = walls.splice(randomIndex, 1)[0]
+  while (!walls.isEmpty()) {
+    // 从优先队列中获取优先级最高的墙
+    const { wall, neighbor } = walls.pop()
 
     // 如果邻居未被访问，则打通这面墙
     if (!neighbor.visited) {
@@ -71,9 +78,17 @@ export const generateMazeByPrim = (width, height, startRow, startCol) => {
       neighbor.isWall = false
       neighbor.visited = true
 
-      // 添加新墙到候选列表
+      // 添加新墙到优先队列
       const newWalls = getWallNeighbors(grid, neighbor.row, neighbor.col, height, width)
-      walls = [...walls, ...newWalls]
+      newWalls.forEach(wallInfo => {
+        walls.push({
+          wall: wallInfo.wall,
+          neighbor: wallInfo.neighbor,
+          priority: Math.random(), // 随机优先级
+          key: `${wallInfo.wall.row},${wallInfo.wall.col}`
+        })
+        console.log('Added wall:', walls.heap[walls.heap.length - 1].priority, walls.heap[walls.heap.length - 1].key)
+      })
     }
   }
 
@@ -83,5 +98,5 @@ export const generateMazeByPrim = (width, height, startRow, startCol) => {
   const end = grid[endRow][endCol]
   end.isWall = false
 
-  return { grid, start, end }
+  return grid
 }

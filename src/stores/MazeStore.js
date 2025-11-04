@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
-// import { generateMazeByPrim } from '@/alogorithms/generators/Prim.js'
+import { generateMazeByPrim } from '@/alogorithms/generators/Prim.js'
 import { generateMazeByKruskal } from '@/alogorithms/generators/Kruskal.js'
-import { solveMazeByDFSRecursive } from '@/alogorithms/solvers/dfs.js'
+
+import { solveMazeByDFSRecursive, solveMazeByDFSIterative } from '@/alogorithms/solvers/dfs.js'
 import { solveMazeByBFS } from '@/alogorithms/solvers/bfs.js'
 import { solveMazeByAStar } from '@/alogorithms/solvers/aStar.js'
 import { solveMazeByDijkstra } from '@/alogorithms/solvers/dijkstra.js'
@@ -9,7 +10,7 @@ import { solveMazeByDijkstra } from '@/alogorithms/solvers/dijkstra.js'
 export const useMazeStore = defineStore('maze', {
   state: () => ({
     // 迷宫参数
-    height: 10,
+    height: 11,
     width: 15,
     totalCells: 150,
     genAlgo: null, // 生成算法
@@ -68,9 +69,9 @@ export const useMazeStore = defineStore('maze', {
         case 'bfs':
           return 'O(N)'
         case 'astar':
-          return  'O(N² log N)'
+          return  'O((V + E) log V)'
         case 'dijkstra':
-          return 'O(N² log N)'
+          return 'O(V log V)'
         default:
           return '待选择求解算法'
       }
@@ -91,7 +92,18 @@ export const useMazeStore = defineStore('maze', {
       this.visitedCount = 0 
 
       try {
-        const result = generateMazeByKruskal(this.width, this.height, 1, 1)
+        let result
+        switch (this.genAlgo) {
+          case 'kruskal':
+             result = generateMazeByKruskal(this.width, this.height, 1, 1)
+            break;
+          case 'prim':
+             result = generateMazeByPrim(this.width, this.height, 1, 1)
+            break;
+          default:
+            return;
+        }
+        
         this.grid = result 
         this.start = {row: 1, col: 1}
         this.end = {row: this.height - 2, col: this.width - 2}
@@ -123,6 +135,7 @@ export const useMazeStore = defineStore('maze', {
             result = solveMazeByDFSRecursive(this.grid, this.start, this.end)
             break
           case 'dfs-iterative':
+            result = solveMazeByDFSIterative(this.grid, this.start, this.end)
             break
           case 'bfs':
             result = solveMazeByBFS(this.grid, this.start, this.end)
